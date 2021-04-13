@@ -1,0 +1,38 @@
+#include "msp430.h"                     ; #define controlled include file
+
+MODULE drawing
+PUBLIC displayRead, displayOption, displayLog
+RSEG    CSTACK                  ; pre-declaration of segment
+RSEG    CODE                    ; place program in 'CODE' segment
+
+displayRead:
+      MOV.W   #2, &LCDCMEMCTL
+      MOV.B   #11001111B, &0X0a29  ;Rh
+      MOV.B   #00000010B, &0X0a2a  ;Rl
+      MOV.B   #10011111B, &0X0a25  ;E
+      MOV.B   #11101111B, &0X0a23  ;A
+      MOV.B   #11110000B, &0X0a32  ;dH
+      MOV.B   #01010000B, &0X0a33  ;dL
+      ret
+
+displayOption:
+      MOV.W   #2, &LCDCMEMCTL
+      MOV.B   #11111100B, &0X0a29  ;O
+      MOV.B   #11001111B, &0X0a25  ;P
+      MOV.B   #10000000B, &0X0a23  ;Th
+      MOV.B   #01010000B, &0X0a24  ;Tl
+      MOV.B   #10010000B, &0X0a32  ; Ih
+      MOV.B   #01010000B, &0X0a33  ;Il
+      MOV.B   #11111100B, &0X0a2e  ;O
+      MOV.B   #01101100B, &0X0a27  ;Nh
+      MOV.B   #10000010B, &0X0a28  ;Nl
+      ret
+      
+displayLog:
+      MOV.W   #2, &LCDCMEMCTL
+      MOV.B   #00011100B, &0X0a29  ;L
+      MOV.B   #11111100B, &0X0a25  ;O
+      MOV.B   #10111101B, &0X0a23  ;G
+      ret
+      
+END

@@ -1,0 +1,7 @@
+*.dep
+*.ewd
+*.ewp
+*.ewt
+proyecto3/
+settings/
+Debug/
