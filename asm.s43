@@ -13,12 +13,19 @@
                                         ; is stored at address 0FFDAh of the
                                         ; Interrupt Vector Table (IVT).
 
+       
+        ORG     0FFE8h                  ; vector for TIMER_A0
+        DC16    TIMER_A0_ISR            ; set vector for 'TIMER_A0_ISR' routine
+        
+
         ORG     0FFFEh
         DC16    init                    ; set reset vector to 'init' label
 
         ORG     01C00H
 state   db      0
         align   1
+        
+intsCounter     DW 0                    ; TIMER_A0 interrupts counter
 
         RSEG    CSTACK                  ; pre-declaration of segment
         RSEG    CODE                    ; place program in 'CODE' segment
@@ -30,7 +37,7 @@ EXTERN S1InterruptWithCallback, S2InterruptWithCallback, activateLed1, deactivat
 ; Drawing
 EXTERN displayLog, displayOption, displayRead
 ; Setup
-EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2
+EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer
 ; transitionHandling
 EXTERN handleTransitionS1
 
@@ -44,23 +51,27 @@ init:   MOV     #SFE(CSTACK), SP        ; set up stack
         call #SetupLCD
         call #SetupInterruptsS1
         call #SetupInterruptsS2
+        call #SetupTimer
         
         mov.b #0, state
+        mov     #0, intsCounter         ; Clear intsCounter
         call #displayOption
         
         bic.b   #0xFF, &P1IFG           ; To erase a flag raised before
                                         ; activating the GIE. This help to
                                         ; avoid responding to a push on button
                                         ; previous to program start.
-        
         NOP
-        bis.w   #GIE,SR
+      
+        bis     #GIE, SR           ; Enable interrupts and enter Low Power mode 0
+                                        ; that doesn't disable timers
+        NOP                             ; Required after enabling interrupts
 
 main:   NOP                             ; main program
         MOV.W   #WDTPW+WDTHOLD,&WDTCTL  ; Stop watchdog timer
         
         
-        
+
         jmp main
         
 PORT_1_ISR:
@@ -78,6 +89,13 @@ PORT_1_ISR:
     pop R5
     bis.b   #06h, &P1IE ; Enable interrupts at P1.1, P1.2
     reti
+
+TIMER_A0_ISR: ;After every interrupt increase the intsCounter
+    call #activateLed1
+    inc intsCounter
+    
+    reti
+    
     
 // ----------------------------------------------------------------------------
 
