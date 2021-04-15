@@ -44,7 +44,7 @@ EXTERN displayLog, displayOption, displayRead
 ; Setup
 EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer
 ; transitionHandling
-EXTERN handleTransitionS1
+EXTERN handleTransitionS1, handleTransitionS2
 
 init:   MOV     #SFE(CSTACK), SP        ; set up stack
         
@@ -85,6 +85,9 @@ PORT_1_ISR:
     push R6
    
     mov #state, R6
+    mov #handleTransitionS2, R5
+    call #S2InterruptWithCallback
+    
     mov #handleTransitionS1, R5
     call #S1InterruptWithCallback
     
