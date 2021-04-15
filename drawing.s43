@@ -81,7 +81,6 @@ displaySixthSegment:
       ret
       
 RemoveBattery:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #00000000B, &0X0a31  
       MOV.B   #00000000B, &0X0a2d  
       ret
