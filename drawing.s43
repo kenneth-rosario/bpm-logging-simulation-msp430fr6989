@@ -46,43 +46,36 @@ displaybattery:
       ret
       
 displayOutline:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #00010000B, &0X0a31  ; []
       MOV.B   #00010000B, &0X0a2d  ; []]
       ret
  
 displayfirstSegment:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #00110000B, &0X0a31 
       MOV.B   #00010000B, &0X0a2d  
       ret
       
 displaySecondSegment:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #00110000B, &0X0a31  
       MOV.B   #00110000B, &0X0a2d  
       ret
       
 displayThirdSegment:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #01110000B, &0X0a31  
       MOV.B   #00110000B, &0X0a2d  
       ret
       
 displayFourthSegment:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #01110000B, &0X0a31  
       MOV.B   #01110000B, &0X0a2d  
       ret
 
 displayFifthSegment:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11110000B, &0X0a31 
       MOV.B   #01110000B, &0X0a2d  
       ret
       
 displaySixthSegment:
-      MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11110000B, &0X0a31  
       MOV.B   #11110000B, &0X0a2d  
       ret
