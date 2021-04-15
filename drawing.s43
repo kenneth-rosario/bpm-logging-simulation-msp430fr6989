@@ -47,44 +47,86 @@ displaybattery:
       
 displayOutline:
       MOV.B   #00010000B, &0X0a31  ; []
-      MOV.B   #00010000B, &0X0a2d  ; []]
       ret
  
 displayfirstSegment:
       MOV.B   #00110000B, &0X0a31 
-      MOV.B   #00010000B, &0X0a2d  
+      MOV.B   #00000000B, &0X0a2d  
       ret
       
 displaySecondSegment:
       MOV.B   #00110000B, &0X0a31  
-      MOV.B   #00110000B, &0X0a2d  
+      MOV.B   #00100000B, &0X0a2d  
       ret
       
 displayThirdSegment:
       MOV.B   #01110000B, &0X0a31  
-      MOV.B   #00110000B, &0X0a2d  
+      MOV.B   #00100000B, &0X0a2d  
       ret
       
 displayFourthSegment:
       MOV.B   #01110000B, &0X0a31  
-      MOV.B   #01110000B, &0X0a2d  
+      MOV.B   #01100000B, &0X0a2d  
       ret
 
 displayFifthSegment:
       MOV.B   #11110000B, &0X0a31 
-      MOV.B   #01110000B, &0X0a2d  
+      MOV.B   #01100000B, &0X0a2d  
       ret
       
 displaySixthSegment:
       MOV.B   #11110000B, &0X0a31  
-      MOV.B   #11110000B, &0X0a2d  
+      MOV.B   #11100000B, &0X0a2d  
       ret
       
-RemoveBattery:
+;Objetivo: Hace display al icono de corazon
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 15/Abril/2021 
+displayHeart:
+      BIS.B   #00000100B, &0X0a22  
+      ret
+      
+;Objetivo: Hace display al icono de clock
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 15/Abril/2021       
+displayClock:
+      BIS.B   #00001000B, &0X0a22  
+      ret
+
+;Objetivo: Clear Methods 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 15/Abril/2021 
+fullClear:
+      MOV.W   #2, &LCDCMEMCTL
+      ret
+
+clearBattery:
       MOV.B   #00000000B, &0X0a31  
       MOV.B   #00000000B, &0X0a2d  
       ret
       
+clearBatteryBorders:
+      MOV.B   #00000000B, &0X0a31  
+      ret
+
+clearBatteryBars:
+      MOV.B   #00000000B, &0X0a2d  
+      ret
+
+clearClock:
+      BIC.B   #00001000B, &0X0a22  
+      ret
+ 
+clearHeart:
+      BIC.B   #00000100B, &0X0a22  
+      ret
+ 
 ;Objetivo: Hace display la palabra "Option" 
 ;Precondiciones:  ninguna
 ;Postcondiciones:  ninguna
