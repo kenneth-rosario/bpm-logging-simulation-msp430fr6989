@@ -1,6 +1,6 @@
 #include "msp430.h"                     ; #define controlled include file
 
-MODULE setup
+MODULE math
 PUBLIC divideR5ByR6
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment

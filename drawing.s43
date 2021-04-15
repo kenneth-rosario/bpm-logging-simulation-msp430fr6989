@@ -6,6 +6,11 @@ EXTERN divideR5ByR6, highBytes, lowBytes
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
+;Objetivo: Hace display la palabra "Read" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021 
 displayRead:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11001111B, &0X0a29  ;Rh
@@ -15,7 +20,12 @@ displayRead:
       MOV.B   #11110000B, &0X0a32  ;dH
       MOV.B   #01010000B, &0X0a33  ;dL
       ret
-
+      
+;Objetivo: Hace display la palabra "Option" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021 
 displayOption:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11111100B, &0X0a29  ;O
@@ -29,6 +39,11 @@ displayOption:
       MOV.B   #10000010B, &0X0a28  ;Nl
       ret
       
+;Objetivo: Hace display la palabra "Log" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021     
 displayLog:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #00011100B, &0X0a29  ;L
@@ -36,6 +51,11 @@ displayLog:
       MOV.B   #10111101B, &0X0a23  ;G
       ret
       
+;Objetivo: Hace display la palabra "BPM" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021      
 displayBPM:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11110001B, &0X0a32  ;BH
@@ -46,10 +66,10 @@ displayBPM:
       ret  
       
 ;Objetivo: coje el r10 y le hace display en lugar 0,1,2 
-;Precondiciones:  
-;Postcondiciones:  
-;Autor: Kenneth Rosario
-;Fecha: 13/marzo/2021      
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021    
 displayBPMNumber:
       push r10
       push r5
@@ -76,7 +96,12 @@ displayBPMNumber:
       pop r5
       pop r10
       ret   
-
+      
+;Objetivo: Hace display la palabra "SAVE" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021 
 displaySave:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #10110111B, &0X0a29  ;S
