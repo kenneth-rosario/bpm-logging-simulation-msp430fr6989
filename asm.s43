@@ -2,7 +2,7 @@
         
         NAME    main                    ; module name
 
-        PUBLIC  main                    ; make the main label vissible
+        PUBLIC  main, highBytes, lowBytes           ; make the main label vissible
                                         ; outside this module
         
         
@@ -25,7 +25,12 @@
 state   db      0
         align   1
         
+// High Bytes and low bytes for numbers
+//              0      1    2      3    4     5     6     7     8     9
+highBytes  db  0xFC, 0x60, 0xDB, 0xF1, 0x67, 0xB7, 0xBF, 0xE0, 0xFF, 0xF7  ; High Bytes for Numbers     
+lowBytes   db  0x28, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Low Bytes for Numbers
 intsCounter     DW 0                    ; TIMER_A0 interrupts counter
+
 
         RSEG    CSTACK                  ; pre-declaration of segment
         RSEG    CODE                    ; place program in 'CODE' segment
