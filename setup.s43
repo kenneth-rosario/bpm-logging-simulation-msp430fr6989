@@ -75,7 +75,7 @@ SetupLCD:
 ;Autor: 
 ;Fecha:
 SetupTimer: 
-        mov     #CCIE, &TA0CCTL0        ; Enable TACCR0 interrupt
+        
         mov     #TASSEL_2+MC_1+ID_3, &TA0CTL  ;Set timer according to next table
 	nop
         
