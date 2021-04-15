@@ -5,10 +5,11 @@ RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
 ; Drawing needs
-EXTERN displayLog, displayRead
+EXTERN displayLog, displayRead, stopTimer, startTimer
 
 ; Transition Function for S1 Transition place current state address in R6
 handleTransitionS1:
+    call #startTimer
     push R7
     mov.b 0(R6), R7
     

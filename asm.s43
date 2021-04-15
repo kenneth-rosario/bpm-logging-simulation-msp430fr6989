@@ -38,7 +38,9 @@ intsCounter     DW 0                    ; TIMER_A0 interrupts counter
 
 
 ; IO
-EXTERN S1InterruptWithCallback, S2InterruptWithCallback, activateLed1, deactivateLed1, 
+EXTERN S1InterruptWithCallback, S2InterruptWithCallback, activateLed1, deactivateLed1
+; Timer
+EXTERN stopTimer, startTimer
 ; Drawing
 EXTERN displayLog, displayOption, displayRead
 ; Setup
@@ -88,6 +90,9 @@ PORT_1_ISR:
     mov #handleTransitionS1, R5
     call #S1InterruptWithCallback
     
+    mov #stopTimer, R5
+    call #S2InterruptWithCallback
+    
     bic.b   #0xFF, &P1IFG
     
     pop R6
@@ -96,7 +101,7 @@ PORT_1_ISR:
     reti
 
 TIMER_A0_ISR: ;After every interrupt increase the intsCounter
-    call #activateLed1
+    xor.b #BIT0,&P1OUT            ; Toggle P1.0 (Red LED)
     inc intsCounter
     
     reti

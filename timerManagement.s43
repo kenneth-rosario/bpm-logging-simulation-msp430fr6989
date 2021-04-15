@@ -1,0 +1,15 @@
+#include "msp430.h"                     ; #define controlled include file
+MODULE timerManagement
+PUBLIC stopTimer, startTimer
+RSEG    CSTACK                  ; pre-declaration of segment
+RSEG    CODE                    ; place program in 'CODE' segment
+
+
+stopTimer:
+  bic     #CCIE, &TA0CCTL0        ; Stop Timer
+  ret
+startTimer:
+  mov     #CCIE, &TA0CCTL0        ; Enable TACCR0 interrupt
+  ret
+
+END
