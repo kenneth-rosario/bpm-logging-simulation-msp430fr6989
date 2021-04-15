@@ -1,0 +1,34 @@
+#include "msp430.h"                     ; #define controlled include file
+
+MODULE math
+PUBLIC divideR5ByR6
+RSEG    CSTACK                  ; pre-declaration of segment
+RSEG    CODE                    ; place program in 'CODE' segment
+
+
+;Objetivo: calcula la division 
+;Precondiciones:  debes pasar el dividendo en R5 y el divisor en R6
+;Postcondiciones:  retorna le cociente en R8 y el residuo en R9
+;Autor: Kenneth Rosario
+;Fecha: 13/marzo/2021 
+divideR5ByR6:
+        push R5; quotient
+        push R6
+        mov #0, R8
+        cmp #0, R6
+        jeq divideCleanUp
+        
+divideLoop:
+        cmp R6, R5 ; compara dividendo y divisor
+        jl divideCleanUp ; si el dividendo es menor que el divisor terminaste
+        sub R6, R5
+        inc R8
+        jmp divideLoop
+        
+divideCleanUp:
+        mov R5, R9
+        pop R6
+        pop R5
+        ret
+
+END

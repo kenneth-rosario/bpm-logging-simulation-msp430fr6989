@@ -2,9 +2,15 @@
 
 MODULE drawing
 PUBLIC displayRead, displayOption, displayLog, displayBPM, displayBPMNumber,displaySave
+EXTERN divideR5ByR6, highBytes, lowBytes
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
+;Objetivo: Hace display la palabra "Read" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021 
 displayRead:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11001111B, &0X0a29  ;Rh
@@ -15,6 +21,75 @@ displayRead:
       MOV.B   #01010000B, &0X0a33  ;dL
       ret
 
+;Objetivo: Hace display la bateria 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 15/Abril/2021 
+displaybattery:
+      MOV.W   #2, &LCDCMEMCTL
+      push r12
+      cmp #0, r12
+      jeq displayOutline
+      cmp #1, r12
+      jeq displayfirstSegment
+      cmp #2, r12
+      jeq displaySecondSegment
+      cmp #3, r12
+      jeq displayThirdSegment
+      cmp #4, r12
+      jeq displayFourthSegment
+      cmp #5, r12
+      jeq displayFifthSegment
+      cmp #6, r12
+      jeq displaySixthSegment
+      ret
+      
+displayOutline:
+      MOV.B   #00010000B, &0X0a31  ; []
+      MOV.B   #00010000B, &0X0a2d  ; []]
+      ret
+ 
+displayfirstSegment:
+      MOV.B   #00110000B, &0X0a31 
+      MOV.B   #00010000B, &0X0a2d  
+      ret
+      
+displaySecondSegment:
+      MOV.B   #00110000B, &0X0a31  
+      MOV.B   #00110000B, &0X0a2d  
+      ret
+      
+displayThirdSegment:
+      MOV.B   #01110000B, &0X0a31  
+      MOV.B   #00110000B, &0X0a2d  
+      ret
+      
+displayFourthSegment:
+      MOV.B   #01110000B, &0X0a31  
+      MOV.B   #01110000B, &0X0a2d  
+      ret
+
+displayFifthSegment:
+      MOV.B   #11110000B, &0X0a31 
+      MOV.B   #01110000B, &0X0a2d  
+      ret
+      
+displaySixthSegment:
+      MOV.B   #11110000B, &0X0a31  
+      MOV.B   #11110000B, &0X0a2d  
+      ret
+      
+RemoveBattery:
+      MOV.B   #00000000B, &0X0a31  
+      MOV.B   #00000000B, &0X0a2d  
+      ret
+      
+;Objetivo: Hace display la palabra "Option" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021 
 displayOption:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11111100B, &0X0a29  ;O
@@ -28,6 +103,11 @@ displayOption:
       MOV.B   #10000010B, &0X0a28  ;Nl
       ret
       
+;Objetivo: Hace display la palabra "Log" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021     
 displayLog:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #00011100B, &0X0a29  ;L
@@ -35,6 +115,11 @@ displayLog:
       MOV.B   #10111101B, &0X0a23  ;G
       ret
       
+;Objetivo: Hace display la palabra "BPM" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021      
 displayBPM:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11110001B, &0X0a32  ;BH
@@ -44,15 +129,43 @@ displayBPM:
       MOV.B   #10100000B, &0X0a28  ;Mh
       ret  
       
+;Objetivo: coje el r10 y le hace display en lugar 0,1,2 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021    
 displayBPMNumber:
-      ;MOV.W   #2, &LCDCMEMCTL
-      ;MOV.B   #11110001B, &0X0a32  ;BH
-      ;MOV.B   #01010000B, &0X0a33  ;Bl
-      ;MOV.B   #11001111B, &0X0a2e  ;P
-      ;MOV.B   #01101100B, &0X0a27  ;Mh
-      ;MOV.B   #10100000B, &0X0a28  ;Mh
-      ;ret   
-
+      push r10
+      push r5
+      push r6
+      push r8
+      push r9
+      MOV.W   #2, &LCDCMEMCTL
+      MOV r10, r5
+      MOV #10, r6
+      call #divideR5ByR6
+      MOV highBytes(R9), &0X0a23
+      MOV lowBytes(R9), &0X0a24
+      MOV r8, r5
+      call #divideR5ByR6
+      MOV highBytes(R9), &0X0a25
+      MOV lowBytes(R9), &0X0a26
+      MOV r8, r5
+      call #divideR5ByR6
+      MOV highBytes(R9), &0X0a29
+      MOV lowBytes(R9), &0X0a2A
+      pop r9
+      pop r8
+      pop r6
+      pop r5
+      pop r10
+      ret   
+      
+;Objetivo: Hace display la palabra "SAVE" 
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Ebdiel Roman Feliciano
+;Fecha: 14/Abril/2021 
 displaySave:
       MOV.W   #2, &LCDCMEMCTL
       MOV.B   #10110111B, &0X0a29  ;S
