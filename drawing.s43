@@ -43,10 +43,11 @@ displaybattery:
       jeq displayFifthSegment
       cmp #6, r12
       jeq displaySixthSegment
+      pop r12
       ret
       
 displayOutline:
-      MOV.B   #00010000B, &0X0a31  ; []
+      BIS.B   #00010000B, &0X0a31  ; []
       ret
  
 displayfirstSegment:
@@ -112,11 +113,12 @@ clearBattery:
       ret
       
 clearBatteryBorders:
-      MOV.B   #00000000B, &0X0a31  
+      BIC.B   #00010000B, &0X0a31 
       ret
 
 clearBatteryBars:
-      MOV.B   #00000000B, &0X0a2d  
+      BIC.B   #11100000B, &0X0a31  
+      BIC.B   #11100000B, &0X0a2d    
       ret
 
 clearClock:
