@@ -1,7 +1,7 @@
 #include "msp430.h"                     ; #define controlled include file
 
 MODULE drawing
-PUBLIC displayRead, displayOption, displayLog, displayBPM, displayBPMNumber,displaySave
+PUBLIC displayRead, displaybattery, displayOutline, displayfirstSegment, displaySecondSegment, displayThirdSegment, displayFourthSegment, displayFifthSegment, displaySixthSegment, displayHeart, displayClock, clearBattery, clearBatteryBorders, clearBatteryBars, clearClock, clearHeart, displayOption, displayLog, displayBPM, displayBPMNumber, displaySave
 EXTERN divideR5ByR6, highBytes, lowBytes
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
