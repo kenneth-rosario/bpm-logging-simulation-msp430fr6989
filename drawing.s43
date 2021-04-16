@@ -1,7 +1,7 @@
 #include "msp430.h"                     ; #define controlled include file
 
 MODULE drawing
-PUBLIC displayRead, displaybattery, displayOutline, displayfirstSegment, displaySecondSegment, displayThirdSegment, displayFourthSegment, displayFifthSegment, displaySixthSegment, displayHeart, displayClock, clearBattery, clearBatteryBorders, clearBatteryBars, clearClock, clearHeart, displayOption, displayLog, displayBPM, displayBPMNumber, displaySave
+PUBLIC displayRead, displaybattery, displayOutline, displayfirstSegment, displaySecondSegment, displayThirdSegment, displayFourthSegment, displayFifthSegment, displaySixthSegment, displayHeart, displayClock, clearBattery, clearBatteryBorders, clearBatteryBars, clearClock, clearHeart, displayOption, displayLog, displayBPM, displayBPMNumber, displaySave, clearfirstSegment, clearSecondSegment, clearThirdSegment, clearFourthSegment, clearFifthSegment, clearSixthSegment
 EXTERN divideR5ByR6, highBytes, lowBytes
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
@@ -51,33 +51,27 @@ displayOutline:
       ret
  
 displayfirstSegment:
-      MOV.B   #00110000B, &0X0a31 
-      MOV.B   #00000000B, &0X0a2d  
+      BIS.B   #00100000B, &0X0a31 
       ret
       
 displaySecondSegment:
-      MOV.B   #00110000B, &0X0a31  
-      MOV.B   #00100000B, &0X0a2d  
+      BIS.B   #00100000B, &0X0a2d  
       ret
       
 displayThirdSegment:
-      MOV.B   #01110000B, &0X0a31  
-      MOV.B   #00100000B, &0X0a2d  
+      BIS.B   #01000000B, &0X0a31  
       ret
       
 displayFourthSegment:
-      MOV.B   #01110000B, &0X0a31  
-      MOV.B   #01100000B, &0X0a2d  
+      BIS.B   #01000000B, &0X0a2d  
       ret
 
 displayFifthSegment:
-      MOV.B   #11110000B, &0X0a31 
-      MOV.B   #01100000B, &0X0a2d  
+      BIS.B   #10000000B, &0X0a31 
       ret
       
 displaySixthSegment:
-      MOV.B   #11110000B, &0X0a31  
-      MOV.B   #11100000B, &0X0a2d  
+      BIS.B   #10000000B, &0X0a2d  
       ret
       
 ;Objetivo: Hace display al icono de corazon
@@ -121,6 +115,30 @@ clearBatteryBars:
       BIC.B   #11100000B, &0X0a2d    
       ret
 
+clearfirstSegment:
+      BIC.B   #00100000B, &0X0a31 
+      ret
+      
+clearSecondSegment:
+      BIC.B   #00100000B, &0X0a2d  
+      ret
+      
+clearThirdSegment:
+      BIC.B   #01000000B, &0X0a31  
+      ret
+      
+clearFourthSegment:
+      BIC.B   #01000000B, &0X0a2d  
+      ret
+
+clearFifthSegment:
+      BIC.B   #10000000B, &0X0a31 
+      ret
+      
+clearSixthSegment:
+      BIC.B   #10000000B, &0X0a2d  
+      ret
+      
 clearClock:
       BIC.B   #00001000B, &0X0a22  
       ret
