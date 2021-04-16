@@ -9,7 +9,6 @@ EXTERN displayLog, displayRead, stopTimer, startTimer
 
 ; Transition Function for S1 Transition place current state address in R6
 handleTransitionS2:
-    call #startTimer
     push R7
     mov.b 0(R6), R7
     
@@ -42,7 +41,6 @@ state2S2:
 
 ; Transition function for S2 Transitions place current state address in R6
 handleTransitionS1:
-    call #stopTimer
     push R7
     mov.b 0(R6), R7
     cmp #1, R7
@@ -54,7 +52,7 @@ returnHandleS1:
     ret
     
 state2S1ReadingState:
-    bis.b #BIT7, &P9OUT
+    call #startTimer
     jmp returnHandleS1
  
     
