@@ -42,11 +42,11 @@ EXTERN S1InterruptWithCallback, S2InterruptWithCallback, activateLed1, deactivat
 ; Timer
 EXTERN stopTimer, startTimer
 ; Drawing
-EXTERN displayLog, displayOption, displayRead
+EXTERN displayLog, displayOption, displayRead, displayClock
 ; Setup
 EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer
 ; transitionHandling
-EXTERN handleTransitionS1, handleTransitionS2
+EXTERN handleTransitionS1, handleTransitionS2, handleTransitionTick
 
 init:   MOV     #SFE(CSTACK), SP        ; set up stack
         
@@ -101,16 +101,29 @@ PORT_1_ISR:
     reti
 
 TIMER_A0_ISR: ;After every interrupt increase the intsCounter
+    push r5
+    push r6
+    
     xor.b #BIT0,&P1OUT            ; Toggle P1.0 (Red LED)
     inc ticks
+    
+    mov #ticks, r5
+    mov #state, r6
+    
+    call #handleTransitionTick
+    
     cmp #150, ticks
     jeq FINISH_TIMER
     
 RETI_TIMER:
+    pop r6
+    pop r5
     reti
     
 FINISH_TIMER:
     call #stopTimer
+    mov #12, state
+    call #displayClock
     mov #0, ticks
     jmp RETI_TIMER
 // ----------------------------------------------------------------------------

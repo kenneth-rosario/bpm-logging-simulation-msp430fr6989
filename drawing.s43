@@ -1,7 +1,7 @@
 #include "msp430.h"                     ; #define controlled include file
 
 MODULE drawing
-PUBLIC displayRead, displaybattery, displayOutline, displayfirstSegment, displaySecondSegment, displayThirdSegment, displayFourthSegment, displayFifthSegment, displaySixthSegment, displayHeart, displayClock, clearBattery, clearBatteryBorders, clearBatteryBars, clearClock, clearHeart, displayOption, displayLog, displayBPM, displayBPMNumber, displaySave, clearfirstSegment, clearSecondSegment, clearThirdSegment, clearFourthSegment, clearFifthSegment, clearSixthSegment
+PUBLIC displayRead, displaybattery, displayOutline, displayfirstSegment, displaySecondSegment, displayThirdSegment, displayFourthSegment, displayFifthSegment, displaySixthSegment, displayHeart, displayClock, clearBattery, clearBatteryBorders, clearBatteryBars, clearClock, clearHeart, displayOption, displayLog, displayBPM, displayBPMNumber, displaySave, clearfirstSegment, clearSecondSegment, clearThirdSegment, clearFourthSegment, clearFifthSegment, clearSixthSegment, fullClear
 EXTERN divideR5ByR6, highBytes, lowBytes
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
@@ -27,8 +27,6 @@ displayRead:
 ;Autor: Ebdiel Roman Feliciano
 ;Fecha: 15/Abril/2021 
 displaybattery:
-      MOV.W   #2, &LCDCMEMCTL
-      push r12
       cmp #0, r12
       jeq displayOutline
       cmp #1, r12
