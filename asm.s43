@@ -29,7 +29,7 @@ state   db      0
 //              0      1    2      3    4     5     6     7     8     9
 highBytes  db  0xFC, 0x60, 0xDB, 0xF1, 0x67, 0xB7, 0xBF, 0xE0, 0xFF, 0xF7  ; High Bytes for Numbers     
 lowBytes   db  0x28, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Low Bytes for Numbers
-intsCounter     DW 0                    ; TIMER_A0 interrupts counter
+ticks     DW 0                    ; TIMER_A0 interrupts counter
 
 
         RSEG    CSTACK                  ; pre-declaration of segment
@@ -46,7 +46,7 @@ EXTERN displayLog, displayOption, displayRead
 ; Setup
 EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer
 ; transitionHandling
-EXTERN handleTransitionS1
+EXTERN handleTransitionS1, handleTransitionS2
 
 init:   MOV     #SFE(CSTACK), SP        ; set up stack
         
@@ -61,7 +61,7 @@ init:   MOV     #SFE(CSTACK), SP        ; set up stack
         call #SetupTimer
         
         mov.b #0, state
-        mov     #0, intsCounter         ; Clear intsCounter
+        mov     #0, ticks         ; Clear intsCounter
         call #displayOption
         
         bic.b   #0xFF, &P1IFG           ; To erase a flag raised before
@@ -87,11 +87,11 @@ PORT_1_ISR:
     push R6
    
     mov #state, R6
+    mov #handleTransitionS2, R5
+    call #S2InterruptWithCallback
+    
     mov #handleTransitionS1, R5
     call #S1InterruptWithCallback
-    
-    mov #stopTimer, R5
-    call #S2InterruptWithCallback
     
     bic.b   #0xFF, &P1IFG
     
@@ -102,11 +102,17 @@ PORT_1_ISR:
 
 TIMER_A0_ISR: ;After every interrupt increase the intsCounter
     xor.b #BIT0,&P1OUT            ; Toggle P1.0 (Red LED)
-    inc intsCounter
+    inc ticks
+    cmp #150, ticks
+    jeq FINISH_TIMER
     
+RETI_TIMER:
     reti
     
-    
+FINISH_TIMER:
+    call #stopTimer
+    mov #0, ticks
+    jmp RETI_TIMER
 // ----------------------------------------------------------------------------
 
 

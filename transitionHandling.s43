@@ -1,6 +1,6 @@
 #include "msp430.h"                     ; #define controlled include file
 MODULE transitionHandling
-PUBLIC handleTransitionS1
+PUBLIC handleTransitionS1, handleTransitionS2
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
@@ -8,35 +8,52 @@ RSEG    CODE                    ; place program in 'CODE' segment
 EXTERN displayLog, displayRead, stopTimer, startTimer
 
 ; Transition Function for S1 Transition place current state address in R6
-handleTransitionS1:
-    call #startTimer
+handleTransitionS2:
     push R7
     mov.b 0(R6), R7
     
     cmp.b #0, R7
-    jeq state0S1
+    jeq state0S2
     cmp.b #1, R7
-    jeq state1S1
+    jeq state1S2
     cmp.b #2, R7
-    jeq state2S1
+    jeq state2S2
     
 returnHandle:
     pop R7
     ret
     
-state0S1:
+state0S2:
     mov.b #1, 0(R6)
-    call #displayLog
-    jmp returnHandle
-
-state1S1:
-    mov.b #2, 0(R6)
     call #displayRead
     jmp returnHandle
-    
-state2S1:
-    mov.b #1, 0(R6)
+
+state1S2:
+    mov.b #2, 0(R6)
     call #displayLog
     jmp returnHandle
+    
+state2S2:
+    mov.b #1, 0(R6)
+    call #displayRead
+    jmp returnHandle
+
+
+; Transition function for S2 Transitions place current state address in R6
+handleTransitionS1:
+    push R7
+    mov.b 0(R6), R7
+    cmp #1, R7
+    jeq state2S1ReadingState
+    
+    
+returnHandleS1:
+    pop R7
+    ret
+    
+state2S1ReadingState:
+    call #startTimer
+    jmp returnHandleS1
+ 
     
 END
