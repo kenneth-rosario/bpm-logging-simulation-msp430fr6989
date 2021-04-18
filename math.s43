@@ -1,14 +1,14 @@
 #include "msp430.h"                     ; #define controlled include file
 
 MODULE math
-PUBLIC divideR5ByR6
+PUBLIC divideR5ByR6, calculateBPM
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
 
 ;Objetivo: calcula la division 
 ;Precondiciones:  debes pasar el dividendo en R5 y el divisor en R6
-;Postcondiciones:  retorna le cociente en R8 y el residuo en R9
+;Postcondiciones:  retorna el cociente en R8 y el residuo en R9
 ;Autor: Kenneth Rosario
 ;Fecha: 13/marzo/2021 
 divideR5ByR6:
@@ -30,5 +30,109 @@ divideCleanUp:
         pop R6
         pop R5
         ret
+        
+;Objetivo: Calcular el BPM en los siguientes casos: 0-6 seg, 6-12 seg, 12-18 seg, 18-24 seg, 24-30 seg
+;Precondiciones:  Se debe pasar los beats al R7 y los ticks al R8  
+;Postcondiciones: Almacena el BPM en el R10
+;Autor: Gustavo A. Roman 
+;Fecha: 15/Abril/2021
+
+calculateBPM: 
+
+      push R7 ;Push R7, R8 y R11 para evitar efectos secundarios
+      push R8 
+      push R11 ;NOTA: Se hizo push para facilitar el proceso de calcular los BPM que mult. con decimales
+      mov #0, R10
+
+calculateBPMLoop: 
+
+      cmp #30, R8 ;BPM durante 0-6 seg (Se multiplica beats por 10)
+      jeq multBeatsByTen
+      cmp #60, R8 ;BPM durante 6-12 seg (Se multiplica beats por 5)
+      jeq multBeatsByFive
+      cmp #90, R8 ;BPM durante 12-18 seg (Se multiplica beats por ~ 3.3)
+      jeq multBeatsByThreePointThree
+      cmp #120, R8 ;BPM durante 18-24 seg (Se multiplica beats por 2.5)
+      jeq multBeatsByTwoPointFive
+      cmp #150, R8 ;BPM durante 24-30 seg (Se multiplica beats por 2)
+      jeq multBeatsByTwo
+      
+multBeatsByTen: 
+
+      cmp #10, R10 
+      jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
+      add R7, R7
+      inc R10
+      jmp multBeatsByTen
+      
+multBeatsByFive: 
+
+      cmp #5, R10 
+      jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
+      add R7, R7
+      inc R10
+      jmp multBeatsByFive
+
+multBeatsByThreePointThree: 
+
+      cmp #0, R10 
+      jeq divideByThree ;Funcion que calcula el 0.3 de beats y lo almacena en R11
+      cmp #3, R10
+      jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
+      add R7, R7
+      inc R10
+      jmp multBeatsByThreePointThree
+      
+multBeatsByTwoPointFive: 
+      
+      cmp #0, R10
+      jeq divideByTwo ;Funcion que calcula el 0.5 de beats y lo almacena en R11
+      cmp #2, R10
+      jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
+      add R7, R7
+      inc R10
+      jmp multBeatsByTwoPointFive
+      
+multBeatsByTwo: 
+
+      cmp #2, R10
+      jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
+      add R7, R7
+      inc R10
+      jmp multBeatsByTwo
+
+divideByThree:
+      
+      push R5
+      push R6
+      mov R7, R5
+      mov #3, R6
+      call #divideR5ByR6 
+      add R9, R11 
+      pop R6
+      pop R5
+      ret
+      
+divideByTwo:
+      
+      push R5
+      push R6
+      mov R7, R5
+      mov #2, R6
+      call #divideR5ByR6
+      add R9, R11
+      pop R6
+      pop R5
+      ret
+
+calculateBPMcleanup: 
+      
+      add R11, R7
+      mov R7, R10
+      pop R11
+      pop R8
+      pop R7
+      ret  
+
 
 END
