@@ -38,11 +38,13 @@ divideCleanUp:
 ;Fecha: 15/Abril/2021
 
 calculateBPM: 
-
-      push R7 ;Push R7, R8 y R11 para evitar efectos secundarios
-      push R8 
+              ;R7 -> Beats, R8 -> Ticks, R9 -> R10 -> BPM, R11 -> auxiliary, R12 -> BPM temp
+      push R7 ;Push R7, R8, R9 y R11 para evitar efectos secundarios
+      push R8
       push R11 ;NOTA: Se hizo push para facilitar el proceso de calcular los BPM que mult. con decimales
+      push R12 
       mov #0, R10
+      mov #0, R12
 
 calculateBPMLoop: 
 
@@ -61,7 +63,7 @@ multBeatsByTen:
 
       cmp #10, R10 
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
-      add R7, R7
+      add R7, R12
       inc R10
       jmp multBeatsByTen
       
@@ -69,7 +71,7 @@ multBeatsByFive:
 
       cmp #5, R10 
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
-      add R7, R7
+      add R7, R12
       inc R10
       jmp multBeatsByFive
 
@@ -79,7 +81,7 @@ multBeatsByThreePointThree:
       jeq divideByThree ;Funcion que calcula el 0.3 de beats y lo almacena en R11
       cmp #3, R10
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
-      add R7, R7
+      add R7, R12
       inc R10
       jmp multBeatsByThreePointThree
       
@@ -89,7 +91,7 @@ multBeatsByTwoPointFive:
       jeq divideByTwo ;Funcion que calcula el 0.5 de beats y lo almacena en R11
       cmp #2, R10
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
-      add R7, R7
+      add R7, R12
       inc R10
       jmp multBeatsByTwoPointFive
       
@@ -97,7 +99,7 @@ multBeatsByTwo:
 
       cmp #2, R10
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
-      add R7, R7
+      add R7, R12
       inc R10
       jmp multBeatsByTwo
 
@@ -127,11 +129,13 @@ divideByTwo:
 
 calculateBPMcleanup: 
       
-      add R11, R7
-      mov R7, R10
+      add R11, R12
+      mov R12, R10
+      pop R12
       pop R11
       pop R8
       pop R7
+     
       ret  
 
 
