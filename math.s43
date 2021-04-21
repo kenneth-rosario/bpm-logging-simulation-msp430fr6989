@@ -44,6 +44,7 @@ calculateBPM:
       push R11 ;NOTA: Se hizo push para facilitar el proceso de calcular los BPM que mult. con decimales
       push R12 
       mov #0, R10
+      mov #0, R12
 
 calculateBPMLoop: 
 
