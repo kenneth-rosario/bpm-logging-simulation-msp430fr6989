@@ -130,9 +130,11 @@ calculateBPMcleanup:
       
       add R11, R12
       mov R12, R10
+      pop R12
       pop R11
       pop R8
       pop R7
+     
       ret  
 
 
