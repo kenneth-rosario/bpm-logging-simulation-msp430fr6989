@@ -107,10 +107,12 @@ divideByThree:
       
       push R5
       push R6
+      push R8
       mov R7, R5
       mov #3, R6
       call #divideR5ByR6 
-      add R9, R11 
+      add R8, R11 
+      pop R8
       pop R6
       pop R5
       ret
@@ -119,10 +121,12 @@ divideByTwo:
       
       push R5
       push R6
+      push R8
       mov R7, R5
       mov #2, R6
       call #divideR5ByR6
-      add R9, R11
+      add R8, R11
+      pop R8
       pop R6
       pop R5
       ret
