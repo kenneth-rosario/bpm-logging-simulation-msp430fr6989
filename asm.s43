@@ -94,10 +94,10 @@ PORT_1_ISR:
     call #S1InterruptWithCallback
     
     bic.b   #0xFF, &P1IFG
-    
     pop R6
     pop R5
     bis.b   #06h, &P1IE ; Enable interrupts at P1.1, P1.2
+    call #delay
     reti
 
 TIMER_A0_ISR: ;After every interrupt increase the intsCounter
@@ -126,6 +126,24 @@ FINISH_TIMER:
     call #displayClock
     mov #0, ticks
     jmp RETI_TIMER
+    
+;Objetivo:  Subrutina para crear un delay, usando r9 y dandole un valor fijo, y luego llama DEC para bajar hasta 0, en donde se termina el dalay.
+;Precondiciones:  Ninguna 
+;Postcondiciones:  Ninguna
+;Autor: Ebdiel
+;Fecha: 10/marzo/2021
+break:
+        ret
+delay:
+        MOV     #0x7FFF, R9
+        CALL    #decr
+        JMP     break
+        
+decr:   
+        CMP     #0, R9
+        JEQ     break
+        DEC     R9
+        JMP     decr
 // ----------------------------------------------------------------------------
 
 
