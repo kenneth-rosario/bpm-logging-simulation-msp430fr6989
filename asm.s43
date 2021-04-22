@@ -2,7 +2,7 @@
         
         NAME    main                    ; module name
 
-        PUBLIC  main, highBytes, lowBytes           ; make the main label vissible
+        PUBLIC  main, highBytes, lowBytes, beats, ticks           ; make the main label vissible
                                         ; outside this module
         
         
@@ -24,12 +24,13 @@
         ORG     01C00H
 state   db      0
         align   1
-        
+ticks     DW 0                    ; TIMER_A0 interrupts counter
+beats     DW 0     
 // High Bytes and low bytes for numbers
 //              0      1    2      3    4     5     6     7     8     9
 highBytes  db  0xFC, 0x60, 0xDB, 0xF1, 0x67, 0xB7, 0xBF, 0xE0, 0xFF, 0xF7  ; High Bytes for Numbers     
 lowBytes   db  0x28, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Low Bytes for Numbers
-ticks     DW 0                    ; TIMER_A0 interrupts counter
+
 
 
         RSEG    CSTACK                  ; pre-declaration of segment
@@ -42,7 +43,7 @@ EXTERN S1InterruptWithCallback, S2InterruptWithCallback, activateLed1, deactivat
 ; Timer
 EXTERN stopTimer, startTimer
 ; Drawing
-EXTERN displayLog, displayOption, displayRead, displayClock
+EXTERN displayLog, displayOption, displayRead, displayClock, displaybattery
 ; Setup
 EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer
 ; transitionHandling
@@ -70,14 +71,14 @@ init:   MOV     #SFE(CSTACK), SP        ; set up stack
                                         ; previous to program start.
         NOP
       
-        bis     #GIE, SR           ; Enable interrupts and enter Low Power mode 0
-                                        ; that doesn't disable timers
-        NOP                             ; Required after enabling interrupts
+        
 
 main:   NOP                             ; main program
         MOV.W   #WDTPW+WDTHOLD,&WDTCTL  ; Stop watchdog timer
         
-        
+        bis.b     #GIE+LPM0, SR           ; Enable interrupts and enter Low Power mode 0
+                                        ; that doesn't disable timers
+        NOP                             ; Required after enabling interrupts
 
         jmp main
         
@@ -104,16 +105,18 @@ TIMER_A0_ISR: ;After every interrupt increase the intsCounter
     push r5
     push r6
     
+
+    
     xor.b #BIT0,&P1OUT            ; Toggle P1.0 (Red LED)
     inc ticks
     
-    mov #ticks, r5
     mov #state, r6
     
     call #handleTransitionTick
     
     cmp #150, ticks
-    jeq FINISH_TIMER
+    jge FINISH_TIMER
+
     
 RETI_TIMER:
     pop r6
@@ -121,10 +124,16 @@ RETI_TIMER:
     reti
     
 FINISH_TIMER:
-    call #stopTimer
-    mov #12, state
+    
     call #displayClock
+    mov #12, state
     mov #0, ticks
+    mov #0, beats
+    push r12
+    mov #6, r12
+    call #displaybattery
+    call #stopTimer
+    pop r12
     jmp RETI_TIMER
 // ----------------------------------------------------------------------------
 
