@@ -44,6 +44,7 @@ calculateBPM:
       push R11 ;NOTA: Se hizo push para facilitar el proceso de calcular los BPM que mult. con decimales
       push R12 
       mov #0, R10
+      mov #0, R11
       mov #0, R12
 
 calculateBPMLoop: 
@@ -120,14 +121,14 @@ divideByTwo:
       mov R7, R5
       mov #2, R6
       call #divideR5ByR6
-      add R9, R11
+      mov R8, R11
       pop R6
       pop R5
       ret
 
 calculateBPMcleanup: 
-      
-      add R11, R12
+      ; Adding r11 again
+      ;add R11, R12
       mov R12, R10
       pop R12
       pop R11
