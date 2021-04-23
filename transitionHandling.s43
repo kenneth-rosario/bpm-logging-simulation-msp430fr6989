@@ -5,7 +5,9 @@ RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
 ; Drawing needs
-EXTERN displayLog, displayRead, stopTimer, startTimer, fullClear, displaybattery, divideR5ByR6, clearBatteryBars, ticks, beats, displayHeart, clearHeart, calculateBPM, displayBPMNumber, displayBPM, displaySave, displayOption
+EXTERN displayLog, displayRead, fullClear, displaybattery, divideR5ByR6, clearBatteryBars, ticks, beats, displayHeart, clearHeart, calculateBPM, displayBPMNumber, displayBPM, displaySave, displayOption
+; Timer
+EXTERN startTimerA1, stopTimer, startTimer
 
 ; Transition Function for S1 Transition place current state address in R6
 handleTransitionS2:
@@ -82,6 +84,7 @@ state2S1ReadingState:
 
 state3S1InputBeat:
     call #displayHeart
+    call #startTimerA1
     inc beats
     jmp returnHandleS1
 
@@ -167,7 +170,6 @@ restartBattery:
     jmp drawBatteries
 
 returnHandleTick:
-    call #clearHeart
     pop r12
     pop r9
     pop r8

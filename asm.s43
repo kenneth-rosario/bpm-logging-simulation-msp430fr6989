@@ -17,6 +17,8 @@
         ORG     0FFE8h                  ; vector for TIMER_A0
         DC16    TIMER_A0_ISR            ; set vector for 'TIMER_A0_ISR' routine
         
+        ORG     0FFDEh
+        DC16    TIMER_A1_ISR
 
         ORG     0FFFEh
         DC16    init                    ; set reset vector to 'init' label
@@ -41,11 +43,11 @@ lowBytes   db  0x28, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Low Bytes for Numbers
 ; IO
 EXTERN S1InterruptWithCallback, S2InterruptWithCallback, activateLed1, deactivateLed1
 ; Timer
-EXTERN stopTimer, startTimer
+EXTERN stopTimer, startTimer, stopTimerA1
 ; Drawing
-EXTERN displayLog, displayOption, displayRead, displayClock, displaybattery
+EXTERN displayLog, displayOption, displayRead, displayClock, displaybattery, clearHeart
 ; Setup
-EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer
+EXTERN SetupLCD,  SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupTimer, SetupTimerA1
 ; transitionHandling
 EXTERN handleTransitionS1, handleTransitionS2, handleTransitionTick
 
@@ -60,9 +62,13 @@ init:   MOV     #SFE(CSTACK), SP        ; set up stack
         call #SetupInterruptsS1
         call #SetupInterruptsS2
         call #SetupTimer
+        call #SetupTimerA1
         
+        call #stopTimer
+        call #stopTimerA1
         mov.b #0, state
-        mov     #0, ticks         ; Clear intsCounter
+        mov #0, ticks         ; Clear intsCounter
+        mov #0, beats
         call #displayOption
         
         bic.b   #0xFF, &P1IFG           ; To erase a flag raised before
@@ -83,7 +89,9 @@ main:   NOP                             ; main program
         jmp main
         
 PORT_1_ISR:
-    bic.b   #06h, &P1IE             ; Disable interrupt at P1.1, P1.2
+    
+    ;bic.b   #06h, &P1IE             ; Disable interrupt at P1.1, P1.2
+    call #delay
     push R5
     push R6
    
@@ -97,8 +105,7 @@ PORT_1_ISR:
     bic.b   #0xFF, &P1IFG
     pop R6
     pop R5
-    bis.b   #06h, &P1IE ; Enable interrupts at P1.1, P1.2
-    call #delay
+    ;bis.b   #06h, &P1IE ; Enable interrupts at P1.1, P1.2
     reti
 
 TIMER_A0_ISR: ;After every interrupt increase the intsCounter
@@ -136,6 +143,12 @@ FINISH_TIMER:
     pop r12
     jmp RETI_TIMER
     
+    
+TIMER_A1_ISR:
+    call #clearHeart
+    call #stopTimerA1
+    reti
+    
 ;Objetivo:  Subrutina para crear un delay, usando r9 y dandole un valor fijo, y luego llama DEC para bajar hasta 0, en donde se termina el dalay.
 ;Precondiciones:  Ninguna 
 ;Postcondiciones:  Ninguna
@@ -144,7 +157,7 @@ FINISH_TIMER:
 break:
         ret
 delay:
-        MOV     #0x7FFF, R9
+        MOV     #0x4fff, R9
         CALL    #decr
         JMP     break
         
