@@ -5,7 +5,7 @@ RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
 ; Drawing needs
-EXTERN displayLog, displayRead, stopTimer, startTimer, fullClear, displaybattery, divideR5ByR6, clearBatteryBars
+EXTERN displayLog, displayRead, stopTimer, startTimer, fullClear, displaybattery, divideR5ByR6, clearBatteryBars, ticks, beats, displayHeart, clearHeart, calculateBPM, displayBPMNumber, displayBPM, displaySave, displayOption
 
 ; Transition Function for S1 Transition place current state address in R6
 handleTransitionS2:
@@ -18,6 +18,10 @@ handleTransitionS2:
     jeq state1S2
     cmp.b #2, R7
     jeq state2S2
+    cmp.b #12, R7
+    jeq state12S2ProceedToSave
+    cmp.b #13, R7
+    jeq state13S2StoreBpm
     
 returnHandle:
     pop R7
@@ -37,15 +41,29 @@ state2S2:
     mov.b #1, 0(R6)
     call #displayRead
     jmp returnHandle
-
+    
+state12S2ProceedToSave:
+    mov.b #13, 0(R6)
+    call #fullClear
+    call #displaySave
+    jmp returnHandle
+    
+state13S2StoreBpm:
+    mov.b #0, 0(R6)
+    call #fullClear
+    call #displayOption
+    jmp returnHandle
 
 ; Transition function for S2 Transitions place current state address in R6
 handleTransitionS1:
     push R7
     mov.b 0(R6), R7
+    cmp #3, R7
+    jeq state3S1InputBeat
     cmp #1, R7
     jeq state2S1ReadingState
-    
+    cmp #13, R7
+    jeq state13S1DiscardBpm
     
 returnHandleS1:
     pop R7
@@ -58,39 +76,52 @@ state2S1ReadingState:
     mov #0, r12
     call #displaybattery
     
-    mov #3, 0(R6)
+    mov.b #3, 0(R6)
     
     jmp returnHandleS1
 
+state3S1InputBeat:
+    call #displayHeart
+    inc beats
+    jmp returnHandleS1
+
+state13S1DiscardBpm:
+    mov.b #0, 0(R6)
+    call #fullClear
+    call #displayOption
+    jmp returnHandleS1
 ; Transition function for transitions triggered by ticks place current state in r6 and tick number in r5
 handleTransitionTick:
+    push r5
     push r8
     push r9
     push r12
+    
     push r6 ; temporary store state
-    push r5
     
     
     mov #5, r6 
-    mov 0(r5), r5
+    mov ticks, r5
     call #divideR5ByR6
     
-    pop r5 ; reget ticks
     pop r6 ; reget state
-  
+    
+    
     cmp #6, r8 ; seconds
     jge R8reached6
-
+  
+    mov r8, r9
+    
 drawBatteries:
-    mov r8, r12
+    mov r9, r12
     call #displaybattery
     jmp returnHandleTick
   
 R8reached6:
-    cmp #6, r8
-    jeq drawBatteries
+    ; check if remainder is not 0
+    cmp #0, r9
+    jnz returnHandleTick
     
-    push r5
     push r6
     
     mov r8, r5
@@ -98,19 +129,37 @@ R8reached6:
     call #divideR5ByR6
     
     pop r6
-    pop r5
     
-    mov r9, r8
-    cmp #0, r8
+
+    cmp #0, r9
     jeq move6ToR8
     
-    cmp #1, r8
+    cmp #1, r9
     jeq restartBattery
     
     jmp drawBatteries
 
 move6ToR8:
-    mov #6, r8
+    ; Display calculated 
+    push r7
+    push r8
+    push r10
+    
+    ; TASK: Fix battery bars at the end
+    
+    mov beats, r7
+    mov ticks, r8
+    
+    
+    call #calculateBPM
+    call #displayBPMNumber
+    call #displayBPM
+    
+    pop r10
+    pop r8
+    pop r7
+    
+    mov #6, r9
     jmp drawBatteries
     
 restartBattery:
@@ -118,9 +167,11 @@ restartBattery:
     jmp drawBatteries
 
 returnHandleTick:
+    call #clearHeart
     pop r12
     pop r9
     pop r8
+    pop r5
     ret
     
 END

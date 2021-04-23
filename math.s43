@@ -44,6 +44,7 @@ calculateBPM:
       push R11 ;NOTA: Se hizo push para facilitar el proceso de calcular los BPM que mult. con decimales
       push R12 
       mov #0, R10
+      mov #0, R11
       mov #0, R12
 
 calculateBPMLoop: 
@@ -68,7 +69,6 @@ multBeatsByTen:
       jmp multBeatsByTen
       
 multBeatsByFive: 
-
       cmp #5, R10 
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
       add R7, R12
@@ -76,27 +76,26 @@ multBeatsByFive:
       jmp multBeatsByFive
 
 multBeatsByThreePointThree: 
-
-      cmp #0, R10 
-      jeq divideByThree ;Funcion que calcula el 0.3 de beats y lo almacena en R11
+      call #divideByThree ;Funcion que calcula el 0.3 de beats y lo almacena en R11
+      add r11, r12
+multBeatsByThreePointThreeLoop:
       cmp #3, R10
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
       add R7, R12
       inc R10
-      jmp multBeatsByThreePointThree
+      jmp multBeatsByThreePointThreeLoop
       
 multBeatsByTwoPointFive: 
-      
-      cmp #0, R10
-      jeq divideByTwo ;Funcion que calcula el 0.5 de beats y lo almacena en R11
+      call #divideByTwo ;Funcion que calcula el 0.5 de beats y lo almacena en R11
+      add r11, r12
+multBeatsByTwoPointFiveLoop:
       cmp #2, R10
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
       add R7, R12
       inc R10
-      jmp multBeatsByTwoPointFive
+      jmp multBeatsByTwoPointFiveLoop
       
 multBeatsByTwo: 
-
       cmp #2, R10
       jeq calculateBPMcleanup ;Funcion que retorna el BPM en R10
       add R7, R12
@@ -110,7 +109,7 @@ divideByThree:
       mov R7, R5
       mov #3, R6
       call #divideR5ByR6 
-      add R9, R11 
+      mov R8, R11 
       pop R6
       pop R5
       ret
@@ -122,14 +121,14 @@ divideByTwo:
       mov R7, R5
       mov #2, R6
       call #divideR5ByR6
-      add R9, R11
+      mov R8, R11
       pop R6
       pop R5
       ret
 
 calculateBPMcleanup: 
-      
-      add R11, R12
+      ; Adding r11 again
+      ;add R11, R12
       mov R12, R10
       pop R12
       pop R11

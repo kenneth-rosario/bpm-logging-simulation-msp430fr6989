@@ -181,7 +181,7 @@ displayLog:
 ;Autor: Ebdiel Roman Feliciano
 ;Fecha: 14/Abril/2021      
 displayBPM:
-      MOV.W   #2, &LCDCMEMCTL
+      ; MOV.W   #2, &LCDCMEMCTL
       MOV.B   #11110001B, &0X0a32  ;BH
       MOV.B   #01010000B, &0X0a33  ;Bl
       MOV.B   #11001111B, &0X0a2e  ;P
@@ -200,20 +200,20 @@ displayBPMNumber:
       push r6
       push r8
       push r9
-      MOV.W   #2, &LCDCMEMCTL
+      ;MOV.W   #2, &LCDCMEMCTL
       MOV r10, r5
       MOV #10, r6
       call #divideR5ByR6
-      MOV highBytes(R9), &0X0a23
-      MOV lowBytes(R9), &0X0a24
+      MOV.b highBytes(R9), &0X0a23
+      MOV.b lowBytes(R9), &0X0a24
       MOV r8, r5
       call #divideR5ByR6
-      MOV highBytes(R9), &0X0a25
-      MOV lowBytes(R9), &0X0a26
+      MOV.b highBytes(R9), &0X0a25
+      MOV.b lowBytes(R9), &0X0a26
       MOV r8, r5
       call #divideR5ByR6
-      MOV highBytes(R9), &0X0a29
-      MOV lowBytes(R9), &0X0a2A
+      MOV.b highBytes(R9), &0X0a29
+      MOV.b lowBytes(R9), &0X0a2A
       pop r9
       pop r8
       pop r6
