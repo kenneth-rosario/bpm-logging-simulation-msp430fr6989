@@ -1,7 +1,7 @@
 #include "msp430.h"                     ; #define controlled include file
 
 MODULE setup
-PUBLIC SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupLCD, SetupTimer
+PUBLIC SetupPins, UnlockGPIO, SetupInterruptsS1, SetupInterruptsS2, SetupLCD, SetupTimer, SetupTimerA1
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
@@ -92,6 +92,26 @@ SetupTimer:
         mov     #25000, &TA0CCR0        ; Set the timer capture compare register 0
 
 
+
+        ret
+        
+SetupTimerA1:
+        
+        mov     #TASSEL_2+MC_1+ID_3, &TA1CTL  ;Set timer according to next table
+        
+        nop
+        
+        ; Uses SMCLK and up mode
+        ; TASSELx        MCx (mode control)                IDx (input divider)
+        ; 00 -> TACLK    00 -> Stop                        00 -> /1
+        ; 01 -> ACLK     01 -> Up mode (up to TACCR0)      01 -> /2
+        ; 10 -> SMCLK    10 -> Continuous (up to 0FFFFh)   10 -> /4
+        ; 11 -> INCLK    11 -> Up/down (top on TACCR0)     11 -> /8
+        ; period = cycles * divider / SMLCK
+        ; Assuming SMLCK = 1 MHz, divider = 8 and period = 0.2 seg
+        ; cycles = 25000.  
+
+        mov     #25000, &TA1CCR0        ; Set the timer capture compare register 
 
         ret
         
