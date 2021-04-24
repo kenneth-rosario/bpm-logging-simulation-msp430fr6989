@@ -8,6 +8,10 @@ RSEG    CODE                    ; place program in 'CODE' segment
 EXTERN displayLog, displayRead, fullClear, displaybattery, divideR5ByR6, clearBatteryBars, ticks, beats, displayHeart, clearHeart, calculateBPM, displayBPMNumber, displayBPM, displaySave, displayOption
 ; Timer
 EXTERN startTimerA1, stopTimer, startTimer
+; Logging 
+EXTERN saveLog, nextLog, logCurr
+
+EXTERN currentBpm
 
 ; Transition Function for S1 Transition place current state address in R6
 handleTransitionS2:
@@ -51,6 +55,12 @@ state12S2ProceedToSave:
     jmp returnHandle
     
 state13S2StoreBpm:
+    
+    push r8
+    mov currentBpm, r8
+    call #saveLog
+    pop r8
+    
     mov.b #0, 0(R6)
     call #fullClear
     call #displayOption
@@ -63,7 +73,15 @@ handleTransitionS1:
     cmp #3, R7
     jeq state3S1InputBeat
     cmp #1, R7
-    jeq state2S1ReadingState
+    jeq state1S1ReadingState
+    cmp #2, R7
+    jeq state2S1ShowLogs
+    cmp #5, R7
+    jeq state5S1ShowLogs
+    cmp #6, R7
+    jeq state6S1ShowLogs
+    cmp #7, R7
+    jeq state7S1FinishLog
     cmp #13, R7
     jeq state13S1DiscardBpm
     
@@ -71,7 +89,7 @@ returnHandleS1:
     pop R7
     ret
     
-state2S1ReadingState:
+state1S1ReadingState:
     call #startTimer
     call #fullClear
     
@@ -80,6 +98,27 @@ state2S1ReadingState:
     
     mov.b #3, 0(R6)
     
+    jmp returnHandleS1
+    
+state2S1ShowLogs:
+    mov.b #5, 0(R6) ; move to state 5
+    call #showNextLog
+    jmp returnHandleS1
+
+state5S1ShowLogs:
+    mov.b #6, 0(R6)
+    call #showNextLog
+    jmp returnHandleS1
+    
+state6S1ShowLogs:
+    mov.b #7, 0(R6)
+    call #showNextLog
+    jmp returnHandleS1
+
+state7S1FinishLog:
+    mov.b #0, 0(R6)
+    call #fullClear
+    call #displayOption
     jmp returnHandleS1
 
 state3S1InputBeat:
@@ -155,6 +194,7 @@ move6ToR8:
     
     
     call #calculateBPM
+    mov r10, currentBpm
     call #displayBPMNumber
     call #displayBPM
     
@@ -174,6 +214,17 @@ returnHandleTick:
     pop r9
     pop r8
     pop r5
+    ret
+    
+    
+showNextLog:
+    call #nextLog
+    call #fullClear
+    push r10
+    mov logCurr, r10
+    call #displayBPMNumber
+    call #displayBPM
+    pop r10
     ret
     
 END
