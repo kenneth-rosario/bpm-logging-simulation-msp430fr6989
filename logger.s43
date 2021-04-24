@@ -1,0 +1,68 @@
+#include "msp430.h"             ; #define controlled include file
+MODULE logger
+PUBLIC nextLog, saveLog, showCurrentLog
+
+RSEG    CSTACK                  ; pre-declaration of segment
+RSEG    CODE                    ; place program in 'CODE' segment
+
+; Log Data
+EXTERN  log, logPos, logSize, logCurr
+
+;Objetivo: switch to next log
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Luis Romero-Sevilla
+;Fecha: 15/Abril/2021 
+nextLog:
+        PUSH    R5
+        MOV.B   logPos, R5
+        MOV.W   log(R5), &logCurr     
+        INCD.W  &logPos
+        CMP.B   &logSize, &logPos
+        JZ     resetLog
+afterNext:
+        POP     R5
+        ret
+        
+;Objetivo: Reset current log position counter
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Luis Romero-Sevilla
+;Fecha: 15/Abril/2021 
+resetLog:
+        MOV     #0, logPos
+        JMP     afterNext
+
+;Objetivo: Add log to logs array
+;Precondiciones:  valor a ser insertado debe estar en R8
+;Postcondiciones:  ninguna
+;Autor: Luis Romero-Sevilla
+;Fecha: 15/Abril/2021 
+saveLog:
+        PUSH    R5
+        PUSH    R6
+        PUSH    R7
+        MOV.W   #0, R7     
+        MOV.W   log(R7), R5
+        INCD.W  R7
+        MOV.W   log(R7), R6
+        MOV.W   R5, log(R7)
+        INCD.W  R7
+        MOV.W   R6, log(R7)
+        MOV.W   #0, R7
+        MOV.W   R8, log(R7)
+        POP     R7
+        POP     R6
+        POP     R5
+        ret
+        
+;Objetivo: Mostrar Log en pantalla
+;Precondiciones:  ninguna
+;Postcondiciones:  ninguna
+;Autor: Luis Romero-Sevilla
+;Fecha: 15/Abril/2021 
+showCurrentLog:
+        ret
+      
+      
+END
