@@ -27,7 +27,7 @@ handleTransitionS2:
     cmp.b #12, R7
     jeq state12S2ProceedToSave
     cmp.b #13, R7
-    jeq state13S2StoreBpm
+    jeq state13S2DiscardBpm
     
 returnHandle:
     pop R7
@@ -54,13 +54,7 @@ state12S2ProceedToSave:
     call #displaySave
     jmp returnHandle
     
-state13S2StoreBpm:
-    
-    push r8
-    mov currentBpm, r8
-    call #saveLog
-    pop r8
-    
+state13S2DiscardBpm:
     mov.b #0, 0(R6)
     call #fullClear
     call #displayOption
@@ -83,7 +77,7 @@ handleTransitionS1:
     cmp #7, R7
     jeq state7S1FinishLog
     cmp #13, R7
-    jeq state13S1DiscardBpm
+    jeq state13S1StoreBpm
     
 returnHandleS1:
     pop R7
@@ -127,7 +121,12 @@ state3S1InputBeat:
     inc beats
     jmp returnHandleS1
 
-state13S1DiscardBpm:
+state13S1StoreBpm:
+    push r8
+    mov currentBpm, r8
+    call #saveLog
+    pop r8
+
     mov.b #0, 0(R6)
     call #fullClear
     call #displayOption
