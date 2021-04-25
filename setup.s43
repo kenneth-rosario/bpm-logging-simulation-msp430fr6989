@@ -72,7 +72,7 @@ SetupLCD:
 ;Objetivo: Setup the timer to operate with a period of 0.2 segs
 ;Precondiciones:  
 ;Postcondiciones:  
-;Autor: 
+;Autor: Gustavo Roman
 ;Fecha:
 SetupTimer: 
         
@@ -94,7 +94,12 @@ SetupTimer:
 
 
         ret
-        
+
+;Objetivo: Configura el timer a1 a 0.2s
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021
 SetupTimerA1:
         
         mov     #TASSEL_2+MC_1+ID_3, &TA1CTL  ;Set timer according to next table

@@ -29,6 +29,12 @@ logSize DB      6
 logCurr DW      0
 
 logPos  DB      0
+        ALIGN 1
+// High Bytes and low bytes for numbers
+//              0      1    2      3    4     5     6     7     8     9
+highBytes  db  0xFC, 0x60, 0xDB, 0xF1, 0x67, 0xB7, 0xBF, 0xE0, 0xFF, 0xF7  ; High Bytes for Numbers     
+lowBytes   db  0x28, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Low Bytes for Numbers
+
 
         ORG     0FFFEh
         DC16    init                    ; set reset vector to 'init' label
@@ -39,10 +45,6 @@ state   db      0
 ticks     DW 0                    ; TIMER_A0 interrupts counter
 beats     DW 0     
 currentBpm DW 0
-// High Bytes and low bytes for numbers
-//              0      1    2      3    4     5     6     7     8     9
-highBytes  db  0xFC, 0x60, 0xDB, 0xF1, 0x67, 0xB7, 0xBF, 0xE0, 0xFF, 0xF7  ; High Bytes for Numbers     
-lowBytes   db  0x28, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Low Bytes for Numbers
 
 
 
@@ -99,7 +101,13 @@ main:   NOP                             ; main program
         NOP                             ; Required after enabling interrupts
 
         jmp main
-        
+
+
+;Objetivo: Interrupt subroutine para manejar interrupciones en el puerto 1
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021    
 PORT_1_ISR:
     
     ;bic.b   #06h, &P1IE             ; Disable interrupt at P1.1, P1.2
@@ -120,6 +128,11 @@ PORT_1_ISR:
     ;bis.b   #06h, &P1IE ; Enable interrupts at P1.1, P1.2
     reti
 
+;Objetivo: Interrupt subroutine para manejar timer a0
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021  
 TIMER_A0_ISR: ;After every interrupt increase the intsCounter
     push r5
     push r6
@@ -156,6 +169,11 @@ FINISH_TIMER:
     jmp RETI_TIMER
     
     
+;Objetivo: Interrupt subroutine para manejar timer a1
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021  
 TIMER_A1_ISR:
     call #clearHeart
     call #stopTimerA1

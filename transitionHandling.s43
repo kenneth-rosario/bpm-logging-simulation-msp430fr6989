@@ -14,6 +14,11 @@ EXTERN saveLog, nextLog, logCurr
 EXTERN currentBpm
 
 ; Transition Function for S1 Transition place current state address in R6
+;Objetivo: Maneja las trancisiones de S2 usando el estado actual
+;Precondiciones:   Debes incluir el address del state en R6
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021    
 handleTransitionS2:
     push R7
     mov.b 0(R6), R7
@@ -60,7 +65,12 @@ state13S2DiscardBpm:
     call #displayOption
     jmp returnHandle
 
-; Transition function for S2 Transitions place current state address in R6
+
+;Objetivo: Maneja las trancisiones de S1 usando el estado actual
+;Precondiciones:  Debes incluir el address del state en R6
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021    
 handleTransitionS1:
     push R7
     mov.b 0(R6), R7
@@ -131,7 +141,13 @@ state13S1StoreBpm:
     call #fullClear
     call #displayOption
     jmp returnHandleS1
-; Transition function for transitions triggered by ticks place current state in r6 and tick number in r5
+    
+    
+;Objetivo: Maneja las trancisiones del timer a0 usando el estado actual
+;Precondiciones:  Debes incluir el address del state en R6
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021    
 handleTransitionTick:
     push r5
     push r8
@@ -215,7 +231,11 @@ returnHandleTick:
     pop r5
     ret
     
-    
+;Objetivo: Funcion que dibuja el proximo log
+;Precondiciones: Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021     
 showNextLog:
     call #nextLog
     call #fullClear
