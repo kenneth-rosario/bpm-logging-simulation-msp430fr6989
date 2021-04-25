@@ -36,7 +36,6 @@ divideCleanUp:
 ;Postcondiciones: Almacena el BPM en el R10
 ;Autor: Gustavo A. Roman 
 ;Fecha: 15/Abril/2021
-
 calculateBPM: 
               ;R7 -> Beats, R8 -> Ticks, R9 -> R10 -> BPM, R11 -> auxiliary, R12 -> BPM temp
       push R7 ;Push R7, R8, R9 y R11 para evitar efectos secundarios

@@ -4,18 +4,38 @@ PUBLIC stopTimer, startTimer, startTimerA1, stopTimerA1
 RSEG    CSTACK                  ; pre-declaration of segment
 RSEG    CODE                    ; place program in 'CODE' segment
 
-
+;Objetivo: Para el timer a0
+;Precondiciones:  Ninguno
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021    
 stopTimer:
   bic     #CCIE, &TA0CCTL0        ; Stop Timer
   ret
+  
+;Objetivo: Empieza el timer a0
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021    
 startTimer:
   mov     #CCIE, &TA0CCTL0        ; Enable TACCR0 interrupt
   ret
-  
+
+;Objetivo: Empieza el timer a1
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021
 startTimerA1:
   mov     #CCIE, &TA1CCTL0        
   ret
   
+;Objetivo: Para el timer a1
+;Precondiciones:  Ninguna
+;Postcondiciones:  Ninguna
+;Autor: Kenneth J. Rosario
+;Fecha: 18/abril/2021
 stopTimerA1:
   bic     #CCIE, &TA1CCTL0        ; Stop Timer
   ret
