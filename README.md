@@ -19,3 +19,9 @@ git clone https://github.com/kenneth-rosario/bpm-logging-simulation-msp430fr6989
 * logger - Handle Logging functionality
 * timerManagement - Handles timer management
 * math - Math functions 
+
+# TEAM MEMBERS
+ * Kenneth J Rosario
+ * Ebdiel Roman
+ * Gustavo Roman
+ * Luis Romero
