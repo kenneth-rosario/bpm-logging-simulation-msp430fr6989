@@ -25,3 +25,6 @@ git clone https://github.com/kenneth-rosario/bpm-logging-simulation-msp430fr6989
  * Ebdiel Roman
  * Gustavo Roman
  * Luis Romero
+
+# CIIC4082 PROFESSOR
+ * Jose Navarro 
