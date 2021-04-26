@@ -16,3 +16,6 @@ git clone https://github.com/kenneth-rosario/bpm-logging-simulation-msp430fr6989
 * Drawing - handles drawing in LCD
 * Setup - handles setting up system
 * transitionHandling - handles state transitions
+* logger - Handle Logging functionality
+* timerManagement - Handles timer management
+* math - Math functions 
